@@ -1,0 +1,14 @@
+name: CoReScreen
+version: '${project.version}'
+main: me.overlight.corescreen.CoReScreen
+author: _OverLight_
+softdepend: [PlaceholderAPI]
+commands:
+  vanish:
+    aliases: [v]
+  freeze:
+    aliases: [f]
+  profiler:
+    aliases: [p]
+  test:
+    aliases: [t]

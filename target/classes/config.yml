@@ -1,0 +1,146 @@
+messages:
+  prefix: "&e&lCoRe&cScreen &6»"
+  no-permission: "%prefix% &cYou don't have enough permissions to use this command!"
+  only-players: "%prefix% &cOnly players can use this command!"
+  player-offline: "%prefix% &8%who%&c is not online!"
+
+  vanish:
+    game:
+      join-message: "&e%player% joined the game" # Set this value to "" if you don't want to send any message to players
+      quit-message: "&e%player% left the game" # Set this value to "" if you don't want to send any message to players
+      action-bar: "%prefix% &4You're Vanish!" # Show in actionbar when player is vanish
+      join-vanish: "%prefix% &aYou're vanished! ( From joined )"
+      chat-mention: # Prevent staffs ( who can see other vanished players ) from mentioning vanishes in chat ( public )
+        enabled: true
+        block-message: "%prefix% &7%player%&c is vanished! You can't mention them in chat"
+    command:
+      you-are-vanish: "%prefix% &aYou're now vanished!"
+      you-are-unvanish: "%prefix% &cYou're no longer vanished!"
+      other-are-vanish: "%prefix% &8%who%&a is now vanished!"
+      other-are-unvanish: "%prefix% &8%who%&c is no longer vanished!"
+  freeze:
+    game:
+      other-logout:
+        message: "%prefix% &8%who%&c has logged out while frozen!"
+        action-message:
+          - "&a%prefix% &8Actions: " # NOTE: Don't set %prefix% at start of action-message
+          - "%ban%"
+          - " "
+          - "%freeze-again%"
+        actions:
+          # *NOTE: All commands will execute from player's client ( not server's console )
+          ban:
+            command: "ban %who% Refusing to SS 1d" # LiteBans / AdvancedBans
+            hover: "&cClick here to ban targeted player"
+            content: "&c&l[BAN]"
+          freeze-again:
+            command: "corescreen:freeze %who% login"
+            hover: "&cClick here to freeze again targeted player when login again"
+            content: "&6&l[FREEZE AGAIN]"
+          # *NOTE: You can add more items if your want more options
+    command:
+      you-freeze-other: "%prefix% &aYou frozen &8%who%&a!"
+      you-unfreeze-other: "%prefix% &aYou unfrozen &8%who%&a!"
+      freeze-other: "%prefix% &8%who%&a has frozen &8%other%&a!"
+      unfreeze-other: "%prefix% &8%who%&a has unfrozen &8%other%&a!"
+      freeze-self: "%prefix% &cYou can't freeze your self!"
+      frozen-when-login: "%prefix% &8%who%&c will freeze again when login again!"
+      other-login-and-freeze-again: "%prefix% &8%who%&c has logged in again and get frozen!"
+  profiler:
+    invalid-profiler-name: "%prefix% &cNo profiler system with name &7%name%&c find!"
+    profiler-success-add: "%prefix% &aSuccessful added &8%who%&a's &8%profiler%&a to your profiler&a!"
+  test:
+    test-not-found: "%prefix% &cNo test with name &7%test%&a found!"
+    knockback:
+      perform: "%prefix% &aPerforming Knockback on &7%player%&a!"
+      success: "%prefix% &7%player%&a has accepted the knockback!"
+      failure: "%prefix% &7%player%&c has rejected the knockback!"
+    rotate:
+      perform: "%prefix% &aPerforming rotation on &7%player%&a!"
+      success: "%prefix% &7%player%&a has accepted the rotation!"
+      failure: "%prefix% &7%player%&c has rejected the rotation!"
+    shuffle:
+      perform: "%prefix% &aPerforming hotbar-shuffle on &7%player%&a!"
+      success: "%prefix% &7%player%&a has accepted the hotbar-shuffle!"
+      failure: "%prefix% &7%player%&c has rejected the hotbar-shuffle!"
+
+settings:
+  freeze:
+    time-remaining-alert:
+      full: 180 # 3 minutes => 3mins * 60secs = 180secs
+      alert-every: 30 # 30 seconds
+      alert-come-to: [20, 10, 5, 4, 3, 2, 1] # This is only for whom frozen, not staffs
+      ignore-alert: [0]
+      message: "%prefix%&c time remaining: &8%time%" # Format of %time%: 173 sec remaining => 2 minutes and 53 seconds remaining
+      message-staff: "%prefix% &7%who%&c's time remaining: &8%time%" # Format of %time%: 173 sec remaining => 2 minutes and 53 seconds remaining
+      times-up: "%prefix% &cTimes up, staffs will select an action for you!" # This message only sent for whom frozen, times up...
+      times-up-staff: "%prefix% &8%who%&c's time finished for screen share, select your action!"
+      action-message: # Only show-up for staffs when frozen player's time finished
+        - "&a|| %prefix% &8Actions: "
+        - "%ban-cheating%"
+        - " "
+        - "%ban-other%"
+        - " "
+        - "%ban-refuse-to-ss%"
+        - " "
+        - "%success%"
+      actions:
+        # *NOTE: All commands will execute from player's client ( not server's console )
+        ban-cheating:
+          command: "ban %who% Cheating 3d" # LiteBans / AdvancedBans
+          hover: "&cClick here to ban targeted player for cheating"
+          content: "&c&l[BAN|CHEATING]"
+        success:
+          command: "corescreen:freeze %who% off"
+          hover: "&cClick here to ignore targeted player ( unfreeze )"
+          content: "&a&l[SUCCESS]"
+        ban-other:
+          command: "ban %who% The Ban Hammer Has Spoken 1d" # LiteBans / AdvancedBans
+          hover: "&cClick here to ban targeted player for other reasons ( The ban hammer has spoken )"
+          content: "&c&l[BAN|OTHER]"
+        ban-refuse-to-ss:
+          command: "ban %who% Refuse to SS 1d" # LiteBans / AdvancedBans
+          hover: "&cClick here to ban targeted player for other reasons ( Refuse to ss )"
+          content: "&c&l[BAN|Refuse to SS]"
+        # *NOTE: You can add more items if your want more options
+  profiler:
+    profiler-update-delay: 2 # In Ticks   2 Ticks = 1/10 second | 20 Ticks = 1 second
+    show-target: true # should show player in start of action bar?
+    formats:
+      player: "&4%player%   &8&l | "
+
+      cps: "&cCPS: &c%placeholder_1% &7&l|&c %placeholder_2%" # Placeholder_1:Placeholder_2  <=  LMB:RMB
+      movement-speed: "&cSpeed: &c%placeholder%"
+      ping: "&cPing: &c%placeholder%"
+      sneaking: "&cSneaking: &c%placeholder%"
+      sprinting: "&cSprinting: &c%placeholder%"
+      sword-blocking: "&cSword-Blocked: &c%placeholder%"
+      vertical-rotation-speed: "&cVRotSpeed: &c%placeholder%"
+      horizontal-rotation-speed: "&cHRotSpeed: &c%placeholder%"
+      reach: "&cReach: &c%placeholder%"
+      fall-speed: "&cFallSpeed: &c%placeholder%"
+
+      splitter: "&8&l | &r"
+  test.knockback:
+    average-check:
+      min: 10.6
+      max: 16.1
+    motion:
+      # *NOTE: These values are limit from -4 to +4
+      # *NOTE: You most set `moved-too-quickly-threshold` to `299.0` in spigot.yml
+      x: 4
+      y: 4
+      z: 4
+  vanish:
+    # Let you sync your servers to prevent players from detecting vanished players
+    # This option will connect players silently to other servers ( server-switching ) without using /vanish
+    server-sync:
+      enabled: true
+      port: 4512 # This code should unique per server & Not in-use before
+      other-server-ports: # Insert here other servers port... ( port that you set last line for them )
+        - 4612
+        - 7154
+    command-cooldown:
+      message: "%prefix% &cThe operation is in cooldown..."
+      vanish: 1500 # milli seconds
+      unvanish: 1500 # milli seconds
