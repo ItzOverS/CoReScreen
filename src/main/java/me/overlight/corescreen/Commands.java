@@ -179,6 +179,10 @@ public class Commands {
                     commandSender.sendMessage(CoReScreen.translate("messages.test.test-not-found").replace("%test%", args[1]));
                     return false;
                 }
+                if (!commandSender.hasPermission("corescreen.test." + test.getName().toLowerCase())) {
+                    commandSender.sendMessage(CoReScreen.translate("messages.no-permission"));
+                    return false;
+                }
                 test.handle(who, (Player) commandSender);
             }
             return false;
