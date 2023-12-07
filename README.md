@@ -51,3 +51,10 @@ Profiler:
 Test:                                                                                                                                                                       
   * main: corescreen.test                                                                                                                                                                      
   * **SOON** | modules-perm: corescreen.test.{module}
+
+
+
+# Placeholders                                                                                   
+  * `onlineplayers` return a int that's online players amount  ( excludes vanished players )                                                                                   
+  * `vanishplayers` return a int that's vanished players amount                                                                                   
+  * `isvanish` return `true` if player is vanish else `false`                                                                                   
