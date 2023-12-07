@@ -33,6 +33,7 @@ public class VanishManager {
     }
 
     public static boolean isVanish(Player player) {
+        if(player == null) return false;
         return vanishes.contains(player.getName());
     }
 
