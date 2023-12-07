@@ -1,7 +1,6 @@
 package me.overlight.corescreen.Vanish;
 
 import io.github.retrooper.packetevents.PacketEvents;
-import io.github.retrooper.packetevents.packetwrappers.NMSPacket;
 import io.github.retrooper.packetevents.packetwrappers.play.out.entitydestroy.WrappedPacketOutEntityDestroy;
 import me.overlight.corescreen.CoReScreen;
 import me.overlight.corescreen.Profiler.ProfilerManager;
@@ -12,9 +11,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class VanishManager {
