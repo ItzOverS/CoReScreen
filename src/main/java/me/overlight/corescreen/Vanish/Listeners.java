@@ -80,14 +80,7 @@ public class Listeners implements Listener {
                         if (vanished != null) {
                             Player finalVanished = vanished;
                             Bukkit.getScheduler().runTask(CoReScreen.getInstance(), () -> PacketEvents.get().getPlayerUtils().sendPacket(e.getPlayer(), new WrappedPacketOutEntityDestroy(finalVanished.getEntityId())));
-                            CraftPlayer craft = (CraftPlayer) e.getPlayer();
-                            EntityTracker tracker = ((WorldServer) craft.getHandle().world).tracker;
-                            EntityPlayer other = ((CraftPlayer) vanished).getHandle();
-                            EntityTrackerEntry entry = tracker.trackedEntities.get(other.getId());
-                            if (entry != null) {
-                                entry.clear(craft.getHandle());
-                            }
-                            Bukkit.getScheduler().runTask(CoReScreen.getInstance(), () -> craft.getHandle().playerConnection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, other)));
+                            Bukkit.getScheduler().runTask(CoReScreen.getInstance(), () -> PacketEvents.get().getPlayerUtils().sendNMSPacket(e.getPlayer(), new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, ((CraftPlayer) finalVanished).getHandle())));
                         }
                     })
             );
@@ -98,13 +91,6 @@ public class Listeners implements Listener {
                 Bukkit.getOnlinePlayers().stream().filter(r -> !r.hasPermission(PacketHandler.see_other_permission) && !Objects.equals(r.getName(), e.getPlayer().getName())).forEach(r -> {
                     Bukkit.getScheduler().runTask(CoReScreen.getInstance(), () -> ((CraftPlayer) r).getHandle().playerConnection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, ((CraftPlayer) e.getPlayer()).getHandle())));
                     Bukkit.getScheduler().runTask(CoReScreen.getInstance(), () -> PacketEvents.get().getPlayerUtils().sendPacket(r, new WrappedPacketOutEntityDestroy(e.getPlayer().getEntityId())));
-                    CraftPlayer craft = (CraftPlayer) r;
-                    EntityTracker tracker = ((WorldServer) craft.getHandle().world).tracker;
-                    EntityPlayer other = ((CraftPlayer) e.getPlayer()).getHandle();
-                    EntityTrackerEntry entry = tracker.trackedEntities.get(other.getId());
-                    if (entry != null) {
-                        entry.clear(craft.getHandle());
-                    }
                 });
             });
 
