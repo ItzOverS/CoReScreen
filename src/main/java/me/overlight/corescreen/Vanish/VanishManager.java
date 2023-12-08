@@ -7,11 +7,16 @@ import io.github.retrooper.packetevents.packetwrappers.play.out.playerinfo.Wrapp
 import me.overlight.corescreen.CoReScreen;
 import me.overlight.corescreen.Profiler.ProfilerManager;
 import me.overlight.powerlib.Chat.Text.impl.PlayerActionBar;
+import me.overlight.powerlib.ServerData;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,7 +46,14 @@ public class VanishManager {
             Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(CoReScreen.translate("messages.vanish.game.quit-message").replace("%player%", player.getName())));
         Bukkit.getOnlinePlayers().stream().filter(p -> !p.hasPermission(PacketHandler.see_other_permission) && !p.getName().equals(player.getName())).forEach(p -> {
             Bukkit.getScheduler().runTask(CoReScreen.getInstance(), () -> PacketEvents.get().getPlayerUtils().sendPacket(p, new WrappedPacketOutEntityDestroy(player.getEntityId())));
-            Bukkit.getScheduler().runTask(CoReScreen.getInstance(), () -> PacketEvents.get().getPlayerUtils().sendNMSPacket(p, new WrappedPacketOutPlayerInfo(WrappedPacketOutPlayerInfo.PlayerInfoAction.REMOVE_PLAYER, getPlayerInfo(player))));
+            try {
+                Class<?> EnumPlayerInfoAction = getNMS("PacketPlayOutPlayerInfo$EnumPlayerInfoAction"), EntityPlayer = getNMS("EntityPlayer");
+                Object entities = Array.newInstance(EntityPlayer, 1);
+                Array.set(entities, 0, player.getClass().getMethod("getHandle").invoke(player));
+                PacketEvents.get().getPlayerUtils().sendNMSPacket(p, getNMS("PacketPlayOutPlayerInfo").getDeclaredConstructor(EnumPlayerInfoAction, Array.newInstance(EntityPlayer, 1).getClass()).newInstance(EnumPlayerInfoAction.getEnumConstants()[4], entities));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
         vanishes.add(player.getName());
         player.setAllowFlight(true);
@@ -64,10 +76,15 @@ public class VanishManager {
             Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(CoReScreen.translate("messages.vanish.game.join-message").replace("%player%", player.getName())));
         Bukkit.getOnlinePlayers().stream().filter(p -> !p.hasPermission(PacketHandler.see_other_permission) && !p.getName().equals(player.getName())).forEach(p -> {
             Bukkit.getScheduler().runTask(CoReScreen.getInstance(), () -> {
+                try {
+                    Class<?> EnumPlayerInfoAction = getNMS("PacketPlayOutPlayerInfo$EnumPlayerInfoAction"), EntityPlayer = getNMS("EntityPlayer");
+                    Object entities = Array.newInstance(EntityPlayer, 1);
+                    Array.set(entities, 0, player.getClass().getMethod("getHandle").invoke(player));
+                    PacketEvents.get().getPlayerUtils().sendNMSPacket(p, getNMS("PacketPlayOutPlayerInfo").getDeclaredConstructor(EnumPlayerInfoAction, Array.newInstance(EntityPlayer, 1).getClass()).newInstance(EnumPlayerInfoAction.getEnumConstants()[0], entities));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 PacketEvents.get().getPlayerUtils().sendPacket(p,
-                        new WrappedPacketOutPlayerInfo(WrappedPacketOutPlayerInfo.PlayerInfoAction.ADD_PLAYER,
-                                getPlayerInfo(player)));
-                PacketEvents.get().getPlayerUtils().sendNMSPacket(p,
                         new WrappedPacketOutNamedEntitySpawn(player));
             });
         });
@@ -81,7 +98,11 @@ public class VanishManager {
         else vanishPlayer(player);
     }
 
-    private static WrappedPacketOutPlayerInfo.PlayerInfo getPlayerInfo(Player player){
-        return new WrappedPacketOutPlayerInfo.PlayerInfo(player.getName(), PacketEvents.get().getPlayerUtils().getGameProfile(player), player.getGameMode(), PacketEvents.get().getPlayerUtils().getPing(player));
+    private static Class getNMS(String nms){
+        try {
+            return Class.forName("net.minecraft.server." + Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3] + "." + nms);
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
     }
 }
