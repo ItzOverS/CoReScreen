@@ -131,6 +131,11 @@ settings:
       x: 4
       y: 4
       z: 4
+    rounds: 5
+    # Delay between checks ( To calculate all required time for check is "`rounds` × `delay`"
+    delay: 5 # 3 Ticks   20 Ticks => 1 Second
+    # *NOTE: This value cannot be more than `delay` if more plugin will limit it `delay - 1`
+    setback-delay: 4 # 4 Ticks 20 Ticks => 1 Second
   vanish:
     # Let you sync your servers to prevent players from detecting vanished players
     # This option will connect players silently to other servers ( server-switching ) without using /vanish
