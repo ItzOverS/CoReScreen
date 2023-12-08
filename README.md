@@ -57,7 +57,9 @@ If you like this plugin, please leave a star
 
 
 
-# Placeholders                                                                                   
+# Placeholders                                                                                                   
+  * PREFIX: `crs`                                                                                                                                     
   * `onlineplayers` return a int that's online players amount  ( excludes vanished players )                                                                                   
   * `vanishplayers` return a int that's vanished players amount                                                                                   
   * `isvanish` return `true` if player is vanish else `false`                                                                                   
+Example: `crs_onlineplayers` `crs_isvanish`
