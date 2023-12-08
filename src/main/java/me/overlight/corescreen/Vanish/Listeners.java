@@ -2,10 +2,9 @@ package me.overlight.corescreen.Vanish;
 
 import io.github.retrooper.packetevents.PacketEvents;
 import io.github.retrooper.packetevents.packetwrappers.play.out.entitydestroy.WrappedPacketOutEntityDestroy;
+import io.github.retrooper.packetevents.packetwrappers.play.out.playerinfo.WrappedPacketOutPlayerInfo;
 import me.overlight.corescreen.CoReScreen;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -80,7 +79,7 @@ public class Listeners implements Listener {
                         if (vanished != null) {
                             Player finalVanished = vanished;
                             Bukkit.getScheduler().runTask(CoReScreen.getInstance(), () -> PacketEvents.get().getPlayerUtils().sendPacket(e.getPlayer(), new WrappedPacketOutEntityDestroy(finalVanished.getEntityId())));
-                            Bukkit.getScheduler().runTask(CoReScreen.getInstance(), () -> PacketEvents.get().getPlayerUtils().sendNMSPacket(e.getPlayer(), new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, ((CraftPlayer) finalVanished).getHandle())));
+                            Bukkit.getScheduler().runTask(CoReScreen.getInstance(), () -> PacketEvents.get().getPlayerUtils().sendNMSPacket(e.getPlayer(), new WrappedPacketOutPlayerInfo(WrappedPacketOutPlayerInfo.PlayerInfoAction.REMOVE_PLAYER, getPlayerInfo(finalVanished))));
                         }
                     })
             );
@@ -89,7 +88,7 @@ public class Listeners implements Listener {
             e.setJoinMessage(null);
             Bukkit.getScheduler().runTask(CoReScreen.getInstance(), () -> {
                 Bukkit.getOnlinePlayers().stream().filter(r -> !r.hasPermission(PacketHandler.see_other_permission) && !Objects.equals(r.getName(), e.getPlayer().getName())).forEach(r -> {
-                    Bukkit.getScheduler().runTask(CoReScreen.getInstance(), () -> ((CraftPlayer) r).getHandle().playerConnection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, ((CraftPlayer) e.getPlayer()).getHandle())));
+                    Bukkit.getScheduler().runTask(CoReScreen.getInstance(), () -> PacketEvents.get().getPlayerUtils().sendPacket(r, new WrappedPacketOutPlayerInfo(WrappedPacketOutPlayerInfo.PlayerInfoAction.REMOVE_PLAYER, getPlayerInfo(e.getPlayer()))));
                     Bukkit.getScheduler().runTask(CoReScreen.getInstance(), () -> PacketEvents.get().getPlayerUtils().sendPacket(r, new WrappedPacketOutEntityDestroy(e.getPlayer().getEntityId())));
                 });
             });
@@ -101,5 +100,9 @@ public class Listeners implements Listener {
     @EventHandler
     public void event(PlayerQuitEvent e){
         if(VanishManager.isVanish(e.getPlayer())) e.setQuitMessage(null);
+    }
+
+    private WrappedPacketOutPlayerInfo.PlayerInfo getPlayerInfo(Player player){
+        return new WrappedPacketOutPlayerInfo.PlayerInfo(player.getName(), PacketEvents.get().getPlayerUtils().getGameProfile(player), player.getGameMode(), PacketEvents.get().getPlayerUtils().getPing(player));
     }
 }
