@@ -33,13 +33,13 @@ public class PacketHandler extends PacketListenerAbstract {
     public static final String see_other_permission = "corescreen.vanish.spect";
 
     @Override
-    public void onPacketPlaySend(PacketPlaySendEvent e) {
+    public void onPacketPlaySend(PacketPlaySendEvent e) {/*
         if (e.getPacketId() == PacketType.Play.Server.ANIMATION) {
             try {
                 Class<?> cls = e.getNMSPacket().getRawNMSPacket().getClass();
                 Field field_id = cls.getDeclaredField("a");
                 field_id.setAccessible(true);
-                int id = (int) field_id.get(cls);
+                int id = field_id.getInt(cls);
                 field_id.setAccessible(false);
                 List<Player> players = VanishManager.vanishes.stream().filter(r -> CoReScreen.getPlayer(r) != null).map(CoReScreen::getPlayer).collect(Collectors.toList());
                 if(!players.stream().map(Player::getEntityId).collect(Collectors.toList()).contains(id)) return;
@@ -48,7 +48,7 @@ public class PacketHandler extends PacketListenerAbstract {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        } else if (e.getPacketId() == PacketType.Play.Server.ENTITY &&
+        } else */if (e.getPacketId() == PacketType.Play.Server.ENTITY &&
                 new WrappedPacketOutEntity(e.getNMSPacket()).getEntity() instanceof Player && !e.getPlayer().hasPermission(see_other_permission) &&
                 VanishManager.isVanish((Player) new WrappedPacketOutEntity(e.getNMSPacket()).getEntity())) e.setCancelled(true);
         else if (e.getPacketId() == PacketType.Play.Server.REMOVE_ENTITY_EFFECT &&
