@@ -33,6 +33,7 @@ If you like this plugin, please leave a star
 - Freeze:                                                                                                                                                                                                                                                  
   * main: `corescreen.freeze`                                                                                                                                        
   * alerts: `corescreen.freeze.alert`
+  * command-whitelist-bypass: `corescreen.freeze.commandbypass`
   * chat-messages: `corescreen.freeze.chat` (Frozen players have a private chat with staffs have this permnission)
                                                                                                                                                                                                                      
 - Vanish:                                                                                                                                                                       
@@ -61,5 +62,5 @@ If you like this plugin, please leave a star
   * PREFIX: `crs`                                                                                                                                     
   * `onlineplayers` return a int that's online players amount  ( excludes vanished players )                                                                                   
   * `vanishplayers` return a int that's vanished players amount                                                                                   
-  * `isvanish` return `true` if player is vanish else `false`                                                                                   
+  * `isvanish` return `true` if player is vanished else `false`                                                                                   
 Example: `crs_onlineplayers` `crs_isvanish`
