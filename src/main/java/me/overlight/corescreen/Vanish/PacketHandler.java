@@ -19,8 +19,11 @@ import io.github.retrooper.packetevents.packetwrappers.play.out.namedentityspawn
 import io.github.retrooper.packetevents.packetwrappers.play.out.removeentityeffect.WrappedPacketOutRemoveEntityEffect;
 import io.github.retrooper.packetevents.packetwrappers.play.out.tabcomplete.WrappedPacketOutTabComplete;
 import me.overlight.corescreen.CoReScreen;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,13 +34,27 @@ public class PacketHandler extends PacketListenerAbstract {
 
     @Override
     public void onPacketPlaySend(PacketPlaySendEvent e) {
-        if (e.getPacketId() == PacketType.Play.Server.ENTITY &&
+        if (e.getPacketId() == PacketType.Play.Server.ANIMATION) {
+            try {
+                Class<?> cls = e.getNMSPacket().getRawNMSPacket().getClass();
+                Field field_id = cls.getDeclaredField("a");
+                field_id.setAccessible(true);
+                int id = (int) field_id.get(cls);
+                field_id.setAccessible(false);
+                List<Player> players = VanishManager.vanishes.stream().filter(r -> CoReScreen.getPlayer(r) != null).map(CoReScreen::getPlayer).collect(Collectors.toList());
+                if(!players.stream().map(Player::getEntityId).collect(Collectors.toList()).contains(id)) return;
+                if(!VanishManager.isVanish(players.stream().filter(f -> f.getEntityId() == id).findFirst().get())) return;
+                if(!e.getPlayer().hasPermission(see_other_permission)) e.setCancelled(true);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else if (e.getPacketId() == PacketType.Play.Server.ENTITY &&
                 new WrappedPacketOutEntity(e.getNMSPacket()).getEntity() instanceof Player && !e.getPlayer().hasPermission(see_other_permission) &&
                 VanishManager.isVanish((Player) new WrappedPacketOutEntity(e.getNMSPacket()).getEntity())) e.setCancelled(true);
-        if (e.getPacketId() == PacketType.Play.Server.REMOVE_ENTITY_EFFECT &&
+        else if (e.getPacketId() == PacketType.Play.Server.REMOVE_ENTITY_EFFECT &&
                 new WrappedPacketOutRemoveEntityEffect(e.getNMSPacket()).getEntity() instanceof Player && !e.getPlayer().hasPermission(see_other_permission) &&
                 VanishManager.isVanish((Player) new WrappedPacketOutRemoveEntityEffect(e.getNMSPacket()).getEntity())) e.setCancelled(true);
-        if (e.getPacketId() == PacketType.Play.Server.NAMED_ENTITY_SPAWN &&
+        else if (e.getPacketId() == PacketType.Play.Server.NAMED_ENTITY_SPAWN &&
                 new WrappedPacketOutNamedEntitySpawn(e.getNMSPacket()).getEntity() instanceof Player && !e.getPlayer().hasPermission(see_other_permission) &&
                 VanishManager.isVanish((Player) new WrappedPacketOutNamedEntitySpawn(e.getNMSPacket()).getEntity())) e.setCancelled(true);
         else if (e.getPacketId() == PacketType.Play.Server.ENTITY_LOOK &&

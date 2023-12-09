@@ -9,7 +9,10 @@ import me.overlight.corescreen.Vanish.PacketHandler;
 import me.overlight.powerlib.PowerLib;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.function.Predicate;
 
 public final class CoReScreen extends JavaPlugin {
 
@@ -21,6 +24,14 @@ public final class CoReScreen extends JavaPlugin {
 
     public static CoReScreen getInstance() {
         return instance;
+    }
+
+    public static Player getPlayer(String name) {
+        try {
+            return Bukkit.getOnlinePlayers().stream().filter(r -> r.getName().equals(name)).findFirst().get();
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     @Override
