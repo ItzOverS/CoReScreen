@@ -109,6 +109,8 @@ settings:
       commands:
         - msg
         - tell
+    blind-eye:
+      enabled: false
   profiler:
     profiler-update-delay: 2 # In Ticks   2 Ticks = 1/10 second | 20 Ticks = 1 second
     show-target: true # should show player in start of action bar?
