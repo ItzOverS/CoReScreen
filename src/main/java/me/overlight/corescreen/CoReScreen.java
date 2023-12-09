@@ -47,6 +47,7 @@ public final class CoReScreen extends JavaPlugin {
         }
         { // Freeze System
             Bukkit.getScheduler().runTask(this, () -> PacketEvents.get().getEventManager().registerListener(new FreezeManager.Handler()));
+            Bukkit.getScheduler().runTask(this, () -> PacketEvents.get().getEventManager().registerListener(new me.overlight.corescreen.Freeze.PacketHandler()));
             getServer().getPluginManager().registerEvents(new Listeners(), this);
             getServer().getPluginCommand("freeze").setExecutor(new Commands.Freeze());
         }

@@ -103,6 +103,12 @@ settings:
           hover: "&cClick here to ban targeted player for other reasons ( Refuse to ss )"
           content: "&c&l[BAN|Refuse to SS]"
         # *NOTE: You can add more items if your want more options
+    whitelist-commands:
+      enabled: true
+      override-tabcomplete: true
+      commands:
+        - msg
+        - tell
   profiler:
     profiler-update-delay: 2 # In Ticks   2 Ticks = 1/10 second | 20 Ticks = 1 second
     show-target: true # should show player in start of action bar?
