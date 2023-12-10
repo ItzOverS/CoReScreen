@@ -22,6 +22,7 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -132,6 +133,26 @@ public class Listeners implements Listener {
             loc.setPitch(e.getPlayer().getLocation().getPitch());
             loc.setYaw(e.getPlayer().getLocation().getYaw());
             e.getPlayer().teleport(loc);
+        }
+    }
+
+    @EventHandler
+    public void event(PlayerTeleportEvent e){
+        if(!Arrays.asList(PlayerTeleportEvent.TeleportCause.COMMAND, PlayerTeleportEvent.TeleportCause.PLUGIN).contains(e.getCause())) {
+            e.setCancelled(true);
+            return;
+        }
+        Location ground = e.getTo().clone();
+        ground.setY(-1);
+        for (int i = ground.getBlockY(); i > 0; i--)
+            if (ground.add(0, i, 0).getBlock().getType() != Material.AIR) {
+                ground.setY(i);
+                break;
+            }
+        if(ground.getY() != -1){
+            FreezeManager.lastGround.put(e.getPlayer().getName(), ground);
+        } else {
+            e.setCancelled(true);
         }
     }
 }
