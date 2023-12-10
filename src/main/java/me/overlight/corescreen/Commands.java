@@ -1,6 +1,7 @@
 package me.overlight.corescreen;
 
 import me.overlight.corescreen.Freeze.FreezeManager;
+import me.overlight.corescreen.Freeze.Warps.WarpManager;
 import me.overlight.corescreen.Profiler.ProfilerManager;
 import me.overlight.corescreen.Profiler.ProfilingSystem;
 import me.overlight.corescreen.Test.TestCheck;
@@ -223,6 +224,7 @@ public class Commands {
                     final List<Integer> ignored$alerts = CoReScreen.getInstance().getConfig().getIntegerList("settings.freeze.time-remaining-alert.ignore-alert"),
                             manual$alerts = CoReScreen.getInstance().getConfig().getIntegerList("settings.freeze.time-remaining-alert.alert-come-to");
                     final int auto$alerts = CoReScreen.getInstance().getConfig().getInt("settings.freeze.time-remaining-alert.alert-every");
+                    if(WarpManager.isEnabled && !WarpManager.warpPlayerToEmpty(who)) commandSender.sendMessage(CoReScreen.translate("messages.freeze.command.warping-failed").replace("%other%", who.getName()));
                     new BukkitRunnable() {
                         private int counter = CoReScreen.getInstance().getConfig().getInt("settings.freeze.time-remaining-alert.full");
 

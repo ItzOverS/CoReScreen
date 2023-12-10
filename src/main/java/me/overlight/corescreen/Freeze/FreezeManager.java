@@ -4,6 +4,7 @@ import io.github.retrooper.packetevents.event.PacketListenerAbstract;
 import io.github.retrooper.packetevents.event.impl.PacketPlayReceiveEvent;
 import io.github.retrooper.packetevents.packettype.PacketType;
 import me.overlight.corescreen.CoReScreen;
+import me.overlight.corescreen.Freeze.Warps.WarpManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -32,6 +33,7 @@ public class FreezeManager {
         frozen.remove(player.getName());
         player.setWalkSpeed(.2f);
         if(blindEye) player.removePotionEffect(PotionEffectType.BLINDNESS);
+        WarpManager.warpPlayerToLast(player);
     }
 
     public static void toggleFreeze(Player player) {

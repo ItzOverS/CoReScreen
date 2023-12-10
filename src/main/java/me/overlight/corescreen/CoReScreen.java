@@ -3,6 +3,8 @@ package me.overlight.corescreen;
 import io.github.retrooper.packetevents.PacketEvents;
 import me.overlight.corescreen.Freeze.FreezeManager;
 import me.overlight.corescreen.Freeze.Listeners;
+import me.overlight.corescreen.Freeze.Warps.Listener;
+import me.overlight.corescreen.Freeze.Warps.WarpManager;
 import me.overlight.corescreen.Profiler.ProfileHandler;
 import me.overlight.corescreen.Vanish.BackwardServerMessenger;
 import me.overlight.corescreen.Vanish.PacketHandler;
@@ -60,6 +62,7 @@ public final class CoReScreen extends JavaPlugin {
             Bukkit.getScheduler().runTask(this, () -> PacketEvents.get().getEventManager().registerListener(new FreezeManager.Handler()));
             Bukkit.getScheduler().runTask(this, () -> PacketEvents.get().getEventManager().registerListener(new me.overlight.corescreen.Freeze.PacketHandler()));
             getServer().getPluginManager().registerEvents(new Listeners(), this);
+            if(WarpManager.isEnabled && WarpManager.protectWarp) getServer().getPluginManager().registerEvents(new Listener(), this);
             getServer().getPluginCommand("freeze").setExecutor(new Commands.Freeze());
         }
         { // Profiler System

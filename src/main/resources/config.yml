@@ -46,6 +46,7 @@ messages:
       freeze-self: "%prefix% &cYou can't freeze your self!"
       frozen-when-login: "%prefix% &8%who%&c will freeze again when login again!"
       other-login-and-freeze-again: "%prefix% &8%who%&c has logged in again and get frozen!"
+      warping-failed: "%prefix% &8%other%&c has failed to warp (no empty warp)"
   profiler:
     invalid-profiler-name: "%prefix% &cNo profiler system with name &7%name%&c find!"
     profiler-success-add: "%prefix% &aSuccessful added &8%who%&a's &8%profiler%&a to your profiler&a!"
@@ -66,6 +67,14 @@ messages:
 
 settings:
   freeze:
+    warp:
+      enabled: false
+      teleport-back: true
+      protect-warp: true
+      warps:  # Format:   name: X;Y;Z;Yaw;Pitch
+        warp_1: world;100;100;100;0;0
+        warp_2: world;100;200;100;0;0
+        warp_3: world;100;300;100;0;0
     time-remaining-alert:
       full: 180 # 3 minutes => 3mins * 60secs = 180secs
       alert-every: 30 # 30 seconds
