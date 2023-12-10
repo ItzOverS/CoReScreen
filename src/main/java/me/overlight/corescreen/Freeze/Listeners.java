@@ -121,7 +121,7 @@ public class Listeners implements Listener {
         Location lastOnGround = FreezeManager.lastGround.get(e.getPlayer().getName());
         if (lastOnGround == null) {
             lastOnGround = e.getPlayer().getLocation().clone();
-            for (int i = lastOnGround.getBlockY(); i > 0; i++)
+            for (int i = lastOnGround.getBlockY(); i > 0; i--)
                 if (lastOnGround.add(0, i, 0).getBlock().getType() != Material.AIR) {
                     lastOnGround.setY(i);
                     break;
