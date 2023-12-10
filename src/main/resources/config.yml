@@ -67,6 +67,9 @@ messages:
 
 settings:
   freeze:
+    cache:
+      enabled: true
+      max-size: 2048 # per player ( Data lines )
     warp:
       enabled: false
       teleport-back: true

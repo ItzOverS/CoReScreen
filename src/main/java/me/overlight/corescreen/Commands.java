@@ -1,5 +1,6 @@
 package me.overlight.corescreen;
 
+import me.overlight.corescreen.Freeze.Cache.CacheManager;
 import me.overlight.corescreen.Freeze.FreezeManager;
 import me.overlight.corescreen.Freeze.Warps.WarpManager;
 import me.overlight.corescreen.Profiler.ProfilerManager;
@@ -280,6 +281,7 @@ public class Commands {
                                 who.sendMessage(text);
                                 final String finalText = text2;
                                 if (!manual$alerts.contains(counter)) Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("corescreen.freeze.alert")).forEach(p -> p.sendMessage(finalText));
+                                CacheManager.cache(who, "[TIMER]" + text2);
                             }
                             counter--;
                         }
