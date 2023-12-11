@@ -114,6 +114,11 @@ public class Listeners implements Listener {
         if (FreezeManager.isFrozen(e.getPlayer())) e.setCancelled(true);
     }
 
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void event(PlayerPickupItemEvent e) {
+        if (FreezeManager.isFrozen(e.getPlayer())) e.setCancelled(true);
+    }
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void event(PlayerMoveEvent e) {
         if (!FreezeManager.isFrozen(e.getPlayer())) {

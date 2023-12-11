@@ -67,6 +67,8 @@ messages:
 
 settings:
   freeze:
+    inventory-clearing:
+      enabled: true
     cache:
       enabled: true
       max-size: 2048 # per player ( Data lines )
