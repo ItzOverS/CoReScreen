@@ -6,8 +6,10 @@ import io.github.retrooper.packetevents.event.impl.PacketPlaySendEvent;
 import io.github.retrooper.packetevents.packettype.PacketType;
 import io.github.retrooper.packetevents.packetwrappers.play.in.chat.WrappedPacketInChat;
 import io.github.retrooper.packetevents.packetwrappers.play.in.tabcomplete.WrappedPacketInTabComplete;
+import io.github.retrooper.packetevents.packetwrappers.play.in.useentity.WrappedPacketInUseEntity;
 import io.github.retrooper.packetevents.packetwrappers.play.out.tabcomplete.WrappedPacketOutTabComplete;
 import me.overlight.corescreen.CoReScreen;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +30,10 @@ public class PacketHandler extends PacketListenerAbstract {
             WrappedPacketInChat packet = new WrappedPacketInChat(e.getNMSPacket());
             if(!packet.getMessage().startsWith("/")) return;
             if(!whitelistCommands.contains(packet.getMessage().substring(1).split(" ")[0])) e.setCancelled(true);
+        } else if(e.getPacketId() == PacketType.Play.Client.USE_ENTITY){
+            WrappedPacketInUseEntity packet = new WrappedPacketInUseEntity(e.getNMSPacket());
+            if(packet.getEntity() == null) return;
+            if(FreezeManager.isFrozen(e.getPlayer()) || (packet.getEntity() instanceof Player && FreezeManager.isFrozen((Player) packet.getEntity()))) e.setCancelled(true);
         }
     }
 

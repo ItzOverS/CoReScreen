@@ -17,6 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.*;
@@ -117,9 +118,9 @@ public class Listeners implements Listener {
     public void event(PlayerMoveEvent e) {
         if (!FreezeManager.isFrozen(e.getPlayer())) {
             if (e.getPlayer().isOnGround()) FreezeManager.lastGround.put(e.getPlayer().getName(), e.getPlayer().getLocation());
+            return;
         }
-        if (!FreezeManager.isFrozen(e.getPlayer())) return;
-        Location lastOnGround = FreezeManager.lastGround.get(e.getPlayer().getName());
+        Location lastOnGround = FreezeManager.lastGround.get(e.getPlayer().getName()).clone();
         if (lastOnGround == null) {
             lastOnGround = e.getPlayer().getLocation().clone();
             for (int i = lastOnGround.getBlockY(); i > 0; i--)
@@ -128,31 +129,10 @@ public class Listeners implements Listener {
                     break;
                 }
         }
-        if (e.getPlayer().getLocation().distance(lastOnGround) > .01f) {
-            final Location loc = lastOnGround.clone();
-            loc.setPitch(e.getPlayer().getLocation().getPitch());
-            loc.setYaw(e.getPlayer().getLocation().getYaw());
-            e.getPlayer().teleport(loc);
-        }
-    }
-
-    @EventHandler
-    public void event(PlayerTeleportEvent e){
-        if(!Arrays.asList(PlayerTeleportEvent.TeleportCause.COMMAND, PlayerTeleportEvent.TeleportCause.PLUGIN).contains(e.getCause())) {
-            e.setCancelled(true);
-            return;
-        }
-        Location ground = e.getTo().clone();
-        ground.setY(-1);
-        for (int i = ground.getBlockY(); i > 0; i--)
-            if (ground.add(0, i, 0).getBlock().getType() != Material.AIR) {
-                ground.setY(i);
-                break;
-            }
-        if(ground.getY() != -1){
-            FreezeManager.lastGround.put(e.getPlayer().getName(), ground);
-        } else {
-            e.setCancelled(true);
-        }
+        if(e.getFrom().distance(e.getTo()) <= .0001f) return;
+        final Location loc = lastOnGround.clone();
+        loc.setPitch(e.getPlayer().getLocation().getPitch());
+        loc.setYaw(e.getPlayer().getLocation().getYaw());
+        e.getPlayer().teleport(loc);
     }
 }
