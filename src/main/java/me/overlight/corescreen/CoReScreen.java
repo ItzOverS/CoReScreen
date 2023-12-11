@@ -1,6 +1,7 @@
 package me.overlight.corescreen;
 
 import io.github.retrooper.packetevents.PacketEvents;
+import me.overlight.corescreen.Freeze.Cache.CacheManager;
 import me.overlight.corescreen.Freeze.FreezeManager;
 import me.overlight.corescreen.Freeze.Listeners;
 import me.overlight.corescreen.Freeze.Warps.Listener;
@@ -61,6 +62,7 @@ public final class CoReScreen extends JavaPlugin {
         { // Freeze System
             Bukkit.getScheduler().runTask(this, () -> PacketEvents.get().getEventManager().registerListener(new FreezeManager.Handler()));
             Bukkit.getScheduler().runTask(this, () -> PacketEvents.get().getEventManager().registerListener(new me.overlight.corescreen.Freeze.PacketHandler()));
+            if(CacheManager.isEnabled) Bukkit.getScheduler().runTask(this, () -> PacketEvents.get().getEventManager().registerListener(new me.overlight.corescreen.Freeze.Cache.Listener()));
             getServer().getPluginManager().registerEvents(new Listeners(), this);
             if(WarpManager.isEnabled && WarpManager.protectWarp) getServer().getPluginManager().registerEvents(new Listener(), this);
             getServer().getPluginCommand("freeze").setExecutor(new Commands.Freeze());

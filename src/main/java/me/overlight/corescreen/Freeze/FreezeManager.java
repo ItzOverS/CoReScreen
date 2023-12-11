@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class FreezeManager {
-    private final static List<String> frozen = new ArrayList<String>();
+    public final static List<String> frozen = new ArrayList<String>();
     public final static List<String> freezeWhenLogin = new ArrayList<String>();
     public final static HashMap<String, Location> lastGround = new HashMap<>();
     public final static boolean blindEye = CoReScreen.getInstance().getConfig().getBoolean("settings.freeze.blind-eye.enabled");

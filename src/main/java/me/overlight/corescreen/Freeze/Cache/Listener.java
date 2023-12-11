@@ -4,6 +4,7 @@ import io.github.retrooper.packetevents.event.PacketListenerAbstract;
 import io.github.retrooper.packetevents.event.impl.PacketPlayReceiveEvent;
 import io.github.retrooper.packetevents.packettype.PacketType;
 import io.github.retrooper.packetevents.packetwrappers.play.in.chat.WrappedPacketInChat;
+import me.overlight.corescreen.CoReScreen;
 import me.overlight.corescreen.Freeze.FreezeManager;
 import me.overlight.powerlib.api.commands.CommandPreProcessEvent;
 import org.bukkit.event.EventHandler;
@@ -14,11 +15,11 @@ public class Listener extends PacketListenerAbstract {
         if(e.getPacketId() == PacketType.Play.Client.CHAT){
             String cmd = new WrappedPacketInChat(e.getNMSPacket()).getMessage();
             if(cmd.startsWith("/")) {
-                if(e.getPlayer().hasPermission("corescreen.freeze.cache")) CacheManager.cache(e.getPlayer(), "[STAFF] " + e.getPlayer().getName() + " has executed command: " + cmd);
-                if(FreezeManager.isFrozen(e.getPlayer())) CacheManager.cache(e.getPlayer(), "[FROZEN] " + e.getPlayer().getName() + " has executed command: " + cmd);
+                if(e.getPlayer().hasPermission("corescreen.freeze.cache")) FreezeManager.frozen.forEach(r -> CacheManager.cache(CoReScreen.getPlayer(r), "[STAFF] " + e.getPlayer().getName() + " has executed command: " + cmd));
+                else if(FreezeManager.isFrozen(e.getPlayer())) CacheManager.cache(e.getPlayer(), "[FROZEN] " + e.getPlayer().getName() + " has executed command: " + cmd);
             } else {
-                if(e.getPlayer().hasPermission("corescreen.freeze.cache")) CacheManager.cache(e.getPlayer(), "[STAFF] " + e.getPlayer().getName() + " has sent chat message: " + cmd);
-                if(FreezeManager.isFrozen(e.getPlayer())) CacheManager.cache(e.getPlayer(), "[FROZEN] " + e.getPlayer().getName() + " has sent chat message: " + cmd);
+                if(e.getPlayer().hasPermission("corescreen.freeze.cache")) FreezeManager.frozen.forEach(r -> CacheManager.cache(CoReScreen.getPlayer(r), "[STAFF] " + e.getPlayer().getName() + " has sent chat message: " + cmd));
+                else if(FreezeManager.isFrozen(e.getPlayer())) CacheManager.cache(e.getPlayer(), "[FROZEN] " + e.getPlayer().getName() + " has sent chat message: " + cmd);
             }
         }
     }
