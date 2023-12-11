@@ -303,7 +303,7 @@ public class Commands {
                 }
                 if (Bukkit.getOnlinePlayers().stream().noneMatch(p -> p.getName().equalsIgnoreCase(args[0]))) {
                     if (FreezeManager.freezeWhenLogin.contains(args[0])) return false;
-                    commandSender.sendMessage(CoReScreen.translate("messages.command.frozen-when-login").replace("%who%", args[0]));
+                    commandSender.sendMessage(CoReScreen.translate("messages.freeze.command.frozen-when-login").replace("%who%", args[0]));
                     FreezeManager.freezeWhenLogin.add(args[0]);
                 } else {
                     FreezeManager.freezePlayer(Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().equalsIgnoreCase(args[0])).collect(Collectors.toList()).get(0));
