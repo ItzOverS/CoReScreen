@@ -99,6 +99,16 @@ public class Commands {
             }
             return false;
         }
+
+        public static class TabComplete implements TabCompleter {
+            @Override
+            public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
+                if(args.length == 1 && commandSender.hasPermission("corescreen.vanish.other")){
+                    return Bukkit.getOnlinePlayers().stream().map(Player::getName).map(String::valueOf).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
+                }
+                return null;
+            }
+        }
     }
 
     public static class Profiler implements CommandExecutor {
@@ -147,8 +157,13 @@ public class Commands {
         public static class TabComplete implements TabCompleter {
             @Override
             public List<String> onTabComplete(CommandSender commandSender, Command command, String alias, String[] args) {
-                if (args.length == 1) return Bukkit.getOnlinePlayers().stream().map(Player::getName).map(String::valueOf).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
-                if (args.length == 2) {
+                if (args.length == 1) {
+                    List<String> out = new ArrayList<>();
+                    if(commandSender.hasPermission("corescreen.profiler.append")) out.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).map(String::valueOf).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList()));
+                    if(commandSender.hasPermission("corescreen.profiler.remove")) out.add("remove");
+                    return out;
+                };
+                if (args.length == 2 && commandSender.hasPermission("corescreen.profiler.append")) {
                     List<String> out = new ArrayList<>(ProfilerManager.profilingSystems.stream().map(ProfilingSystem::getName).map(String::toLowerCase).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList()));
                     out.addAll(NmsHandler.handlers.stream().map(NmsHandler.NmsWrapper::getName).collect(Collectors.toList()));
                     return out;
@@ -342,6 +357,16 @@ public class Commands {
                 }
             }
             return false;
+        }
+
+        public static class TabComplete implements TabCompleter {
+            @Override
+            public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
+                if(args.length == 1 && commandSender.hasPermission("corescreen.freeze")){
+                    return Bukkit.getOnlinePlayers().stream().map(Player::getName).map(String::valueOf).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
+                }
+                return null;
+            }
         }
     }
 }

@@ -58,6 +58,7 @@ public final class CoReScreen extends JavaPlugin {
         { // Vanish System
             Bukkit.getScheduler().runTask(this, () -> PacketEvents.get().getEventManager().registerListener(new PacketHandler()));
             getServer().getPluginCommand("vanish").setExecutor(new Commands.Vanish());
+            getServer().getPluginCommand("vanish").setTabCompleter(new Commands.Vanish.TabComplete());
             getServer().getPluginManager().registerEvents(new me.overlight.corescreen.Vanish.Listeners(), this);
         }
         { // Freeze System
@@ -67,6 +68,7 @@ public final class CoReScreen extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new Listeners(), this);
             if(WarpManager.isEnabled && WarpManager.protectWarp) getServer().getPluginManager().registerEvents(new Listener(), this);
             getServer().getPluginCommand("freeze").setExecutor(new Commands.Freeze());
+            getServer().getPluginCommand("freeze").setTabCompleter(new Commands.Freeze.TabComplete());
         }
         { // Profiler System
             Bukkit.getScheduler().runTaskTimer(this, new ProfileHandler(), 10, getConfig().getInt("settings.profiler.profiler-update-delay"));
