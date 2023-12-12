@@ -37,13 +37,15 @@ public class ProfilerManager {
 
     public static void removeProfiler(Player staff) {
         profilers.removeIf(p -> p.getStaff().equals(staff.getName()));
+        profilersNms.removeIf(p -> p.getStaff().equals(staff.getName()));
     }
 
     public static void removeProfiler(String staff) {
         profilers.removeIf(p -> p.getStaff().equals(staff));
+        profilersNms.removeIf(p -> p.getStaff().equals(staff));
     }
 
     public static boolean isProfiling(String staff) {
-        return profilers.stream().anyMatch(r -> r.getStaff().equals(staff));
+        return profilers.stream().anyMatch(r -> r.getStaff().equals(staff)) || profilersNms.stream().anyMatch(r -> r.getStaff().equals(staff));
     }
 }

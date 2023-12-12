@@ -7,7 +7,7 @@ public class ProfilingSystem {
     private final Profiler.ProfileOption mode;
 
     public boolean isProfiling(Player player) {
-        return ProfilerManager.profilers.stream().anyMatch(r -> r.getWho().equalsIgnoreCase(player.getName()) && r.options.contains(mode));
+        return (ProfilerManager.profilers.stream().anyMatch(r -> r.getWho().equalsIgnoreCase(player.getName()) && r.options.contains(mode)));
     }
 
     public Profiler.ProfileOption getMode() {
