@@ -142,6 +142,11 @@ settings:
       reach: "&cReach: &c%placeholder%"
       fall-speed: "&cFallSpeed: &c%placeholder%"
 
+      player-handler:
+        nms-ping: # This name ( `nms-ping` ) will used in command ( /profiler _OverLight_ nms-ping ) & in tab completion
+          path: "ping" # This is the path nms object contains in CraftPlayer.getHandle() instance
+          label: "&cNMS-Ping: &c%placeholder%" # This is the label show up in profiler's action bar
+
       splitter: "&8&l | &r"
   test.knockback:
     average-check:
@@ -149,7 +154,7 @@ settings:
       max: 16.1
     motion:
       # *NOTE: These values are limit from -4 to +4
-      # *NOTE: You most set `moved-too-quickly-threshold` to `299.0` in spigot.yml
+      # *NOTE: You most set `moved-too-quickly-threshold` to `999.0` in spigot.yml
       x: 4
       y: 4
       z: 4

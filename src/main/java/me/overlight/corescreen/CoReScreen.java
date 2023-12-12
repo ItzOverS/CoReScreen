@@ -7,6 +7,7 @@ import me.overlight.corescreen.Freeze.Listeners;
 import me.overlight.corescreen.Freeze.Warps.Listener;
 import me.overlight.corescreen.Freeze.Warps.WarpManager;
 import me.overlight.corescreen.Profiler.ProfileHandler;
+import me.overlight.corescreen.Profiler.Profiles.NmsHandler;
 import me.overlight.corescreen.Vanish.BackwardServerMessenger;
 import me.overlight.corescreen.Vanish.PacketHandler;
 import me.overlight.powerlib.PowerLib;
@@ -71,6 +72,7 @@ public final class CoReScreen extends JavaPlugin {
             Bukkit.getScheduler().runTaskTimer(this, new ProfileHandler(), 10, getConfig().getInt("settings.profiler.profiler-update-delay"));
             getServer().getPluginCommand("profiler").setExecutor(new Commands.Profiler());
             getServer().getPluginCommand("profiler").setTabCompleter(new Commands.Profiler.TabComplete());
+            NmsHandler.loadCustomSettings();
         }
         { // Tests System
             Bukkit.getScheduler().runTask(this, () -> PacketEvents.get().getEventManager().registerListener(new me.overlight.corescreen.Test.PacketHandler()));

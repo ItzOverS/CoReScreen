@@ -4,6 +4,7 @@ import me.overlight.corescreen.Freeze.Cache.CacheManager;
 import me.overlight.corescreen.Freeze.FreezeManager;
 import me.overlight.corescreen.Freeze.Warps.WarpManager;
 import me.overlight.corescreen.Profiler.ProfilerManager;
+import me.overlight.corescreen.Profiler.Profiles.NmsHandler;
 import me.overlight.corescreen.Profiler.ProfilingSystem;
 import me.overlight.corescreen.Test.TestCheck;
 import me.overlight.corescreen.Test.TestManager;
@@ -128,16 +129,16 @@ public class Commands {
                     return false;
                 }
                 Player who = LWho.get(0);
-                List<ProfilingSystem> profilers = null;
                 try {
-                    profilers = ProfilerManager.profilingSystems.stream().filter(r -> r.getName().equalsIgnoreCase(args[1])).collect(Collectors.toList());
-                } catch (Exception ex) {
-                    commandSender.sendMessage(CoReScreen.translate("messages.profiler.invalid-profiler-name").replace("%name%", args[1]));
-                    return false;
-                }
-                if (profilers != null && !profilers.isEmpty()) {
-                    ProfilerManager.addProfiler((Player) commandSender, who, profilers.get(0).getMode());
+                    ProfilingSystem profiler = ProfilerManager.profilingSystems.stream().filter(r -> r.getName().equalsIgnoreCase(args[1])).collect(Collectors.toList()).get(0);
+                    ProfilerManager.addProfiler((Player) commandSender, who, profiler.getMode());
                     commandSender.sendMessage(CoReScreen.translate("messages.profiler.profiler-success-add").replace("%who%", who.getName()).replace("%profiler%", args[1]));
+                } catch (Exception ex) {
+                    if(NmsHandler.handlers.stream().anyMatch(r -> r.getName().equalsIgnoreCase(args[1]))){
+                        ProfilerManager.addProfiler((Player) commandSender, who, NmsHandler.handlers.stream().filter(r -> r.getName().equalsIgnoreCase(args[1])).findFirst().get());
+                    } else {
+                        commandSender.sendMessage(CoReScreen.translate("messages.profiler.invalid-profiler-name").replace("%name%", args[1]));
+                    }
                 }
             }
             return false;
@@ -147,7 +148,11 @@ public class Commands {
             @Override
             public List<String> onTabComplete(CommandSender commandSender, Command command, String alias, String[] args) {
                 if (args.length == 1) return Bukkit.getOnlinePlayers().stream().map(Player::getName).map(String::valueOf).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
-                if (args.length == 2) return ProfilerManager.profilingSystems.stream().map(ProfilingSystem::getName).map(String::toLowerCase).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
+                if (args.length == 2) {
+                    List<String> out = new ArrayList<>(ProfilerManager.profilingSystems.stream().map(ProfilingSystem::getName).map(String::toLowerCase).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList()));
+                    out.addAll(NmsHandler.handlers.stream().map(NmsHandler.NmsWrapper::getName).collect(Collectors.toList()));
+                    return out;
+                };
                 return null;
             }
         }
