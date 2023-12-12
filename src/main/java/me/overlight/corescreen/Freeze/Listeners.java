@@ -3,6 +3,7 @@ package me.overlight.corescreen.Freeze;
 import me.overlight.corescreen.CoReScreen;
 import me.overlight.corescreen.Commands;
 import me.overlight.corescreen.DiscordWebhook;
+import me.overlight.corescreen.api.Freeze.PlayerFreezeQuitEvent;
 import me.overlight.powerlib.Chat.Text.impl.PlayerChatMessage;
 import me.overlight.powerlib.Chat.Text.impl.ext.ClickableCommand;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -38,6 +39,10 @@ public class Listeners implements Listener {
     @EventHandler
     public void event(PlayerQuitEvent e) {
         if (FreezeManager.isFrozen(e.getPlayer())) {
+            PlayerFreezeQuitEvent event = new PlayerFreezeQuitEvent(false, e.getPlayer());
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            if(event.isCancelled()) return;
+
             FreezeManager.unfreezePlayer(e.getPlayer());
             Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("corescreen.freeze.alert")).forEach(p -> {
                 p.sendMessage(CoReScreen.translate("messages.freeze.game.other-logout.message").replace("%who%", e.getPlayer().getName()));

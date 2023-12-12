@@ -8,6 +8,8 @@ import me.overlight.corescreen.Profiler.ProfilingSystem;
 import me.overlight.corescreen.Test.TestCheck;
 import me.overlight.corescreen.Test.TestManager;
 import me.overlight.corescreen.Vanish.VanishManager;
+import me.overlight.corescreen.api.Freeze.PlayerFreezeEvent;
+import me.overlight.corescreen.api.Freeze.PlayerUnfreezeEvent;
 import me.overlight.powerlib.Chat.Text.impl.PlayerChatMessage;
 import me.overlight.powerlib.Chat.Text.impl.ext.ClickableCommand;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -21,10 +23,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Commands {
@@ -220,6 +219,10 @@ public class Commands {
                 }
                 FreezeManager.toggleFreeze(who);
                 if (FreezeManager.isFrozen(who)) {
+                    PlayerFreezeEvent event = new PlayerFreezeEvent(false, who, !(commandSender instanceof Player)? null: (Player) commandSender);
+                    Bukkit.getServer().getPluginManager().callEvent(event);
+                    if(event.isCancelled()) return false;
+
                     commandSender.sendMessage(CoReScreen.translate("messages.freeze.command.you-freeze-other").replace("%who%", args[0]));
                     Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("corescreen.freeze.alert")).filter(p -> !p.getName().equals(commandSender.getName())).forEach(p -> p.sendMessage(CoReScreen.translate("messages.freeze.command.freeze-other").replace("%other%", args[0]).replace("%who%", commandSender.getName())));
                     final List<Integer> ignored$alerts = CoReScreen.getInstance().getConfig().getIntegerList("settings.freeze.time-remaining-alert.ignore-alert"),
@@ -288,6 +291,10 @@ public class Commands {
                     }.runTaskTimer(CoReScreen.getInstance(), 0, 20);
                     DiscordWebhook.createDef(CoReScreen.getInstance().getConfig().getString("discord.webhooks.on-freeze")).setContent("**" + who.getName() + "** has frozen by **" + commandSender.getName() + "**!").execute();
                 } else {
+                    PlayerUnfreezeEvent event = new PlayerUnfreezeEvent(false, who, !(commandSender instanceof Player)? null: (Player) commandSender);
+                    Bukkit.getServer().getPluginManager().callEvent(event);
+                    if(event.isCancelled()) return false;
+
                     commandSender.sendMessage(CoReScreen.translate("messages.freeze.command.you-unfreeze-other").replace("%who%", args[0]));
                     Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("corescreen.freeze.alert")).filter(p -> !p.getName().equals(commandSender.getName())).forEach(p -> p.sendMessage(CoReScreen.translate("messages.freeze.command.unfreeze-other").replace("%other%", args[0]).replace("%who%", commandSender.getName())));
                     DiscordWebhook.createDef(CoReScreen.getInstance().getConfig().getString("discord.webhooks.on-unfreeze")).setContent("**" + who.getName() + "** has un-frozen by **" + commandSender.getName() + "**!").execute();
@@ -319,8 +326,12 @@ public class Commands {
                     commandSender.sendMessage(CoReScreen.translate("messages.freeze.command.freeze-self"));
                     return false;
                 }
-                if (Bukkit.getOnlinePlayers().stream().anyMatch(p -> p.getName().equalsIgnoreCase(args[0]))) {
-                    FreezeManager.unfreezePlayer(Bukkit.getOnlinePlayers().stream().filter(p -> p.getName().equalsIgnoreCase(args[0])).collect(Collectors.toList()).get(0));
+                if (CoReScreen.getPlayer(args[0]) != null) {
+                    PlayerUnfreezeEvent event = new PlayerUnfreezeEvent(false, CoReScreen.getPlayer(args[0]), !(commandSender instanceof Player)? null: (Player) commandSender);
+                    Bukkit.getServer().getPluginManager().callEvent(event);
+                    if(event.isCancelled()) return false;
+
+                    FreezeManager.unfreezePlayer(Objects.requireNonNull(CoReScreen.getPlayer(args[0])));
                     commandSender.sendMessage(CoReScreen.translate("messages.freeze.command.you-unfreeze-other").replace("%who%", args[0]));
                     Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("corescreen.freeze.alert")).filter(p -> !p.getName().equals(commandSender.getName())).forEach(p -> p.sendMessage(CoReScreen.translate("messages.freeze.command.unfreeze-other").replace("%other%", args[0]).replace("%who%", commandSender.getName())));
                 }
