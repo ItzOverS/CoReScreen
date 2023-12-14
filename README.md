@@ -23,6 +23,9 @@ In this plugin all of required tools to profile & check someone for cheats has i
    * Fully automatic testing with a simple command
    * Show the result of test after testing finished
    * A huge configuration to set messages
+ * ClientSettings
+   * Grab some player's client settings
+   * A little message configuration for
 ‌‌‌                                                                                                                                                                                                                                                         
 # Options
 - Freeze: Let you freeze players for ss                                               
@@ -46,7 +49,11 @@ In this plugin all of required tools to profile & check someone for cheats has i
                                                                                                                                                                       
 ### Test:                                                                                    
   * usage: /test {player-name} {option-to-test}                                                                                   
-  * alias: /t, /test                                                                                   
+  * alias: /t, /test     
+
+### ClientSettings:                                                                                    
+  * usage: /clientsettings {player-name} [item]                                                                              
+  * alias: /cs, /clientsettings                                                                                   
                                                                                                                                                                     
 ## Permissions
 ### Freeze:                                                                                                                                                                                                                                                  
@@ -74,6 +81,12 @@ In this plugin all of required tools to profile & check someone for cheats has i
 ### Test:                                                                                                                                                                       
   * main: `corescreen.test`                                                                                                                                                                 
   * modules-perm: `corescreen.test.{module}`
+  * modules: `knockback`, `rotation`, `shuffle`
+                                                                                                                                                              
+### ClientSettings:                                                                                                                                                                       
+  * main: `corescreen.clientsettings`                                                                                                                                                                 
+  * modules-perm: `corescreen.clientsettings.{module}` 
+  * modules: `clientversion`, `locale`, `renderdistance` & `chatvisibility`
 
 
 
