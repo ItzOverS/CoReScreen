@@ -31,7 +31,8 @@ In this plugin all of required tools to profile & check someone for cheats has i
 - Freeze: Let you freeze players for ss                                               
 - Vanish: Let invisible to normal players                                     
 - Profiler: Let you scan player's actions by items                                                    
-- Test: Let you check something in player's client by acting to them                                            
+- Test: Let you check something in player's client by acting to them     
+- ClientSettings: Let you see player's client settings
 - OperationBlock(**SOON**): Let you block options of player                                     
                           
 ## Commands
