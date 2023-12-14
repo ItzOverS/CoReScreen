@@ -1,5 +1,7 @@
 package me.overlight.corescreen;
 
+import me.overlight.corescreen.ClientSettings.CSManager;
+import me.overlight.corescreen.ClientSettings.CSModule;
 import me.overlight.corescreen.Freeze.Cache.CacheManager;
 import me.overlight.corescreen.Freeze.FreezeManager;
 import me.overlight.corescreen.Freeze.Warps.WarpManager;
@@ -25,6 +27,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class Commands {
@@ -219,6 +222,73 @@ public class Commands {
         }
     }
 
+    public static class ClientSettings implements CommandExecutor {
+        @Override
+        public boolean onCommand(CommandSender commandSender, org.bukkit.command.Command command, String alias, String[] args) {
+            if (args.length == 1) {
+                if (!commandSender.hasPermission("corescreen.clientsettings")) {
+                    commandSender.sendMessage(CoReScreen.translate("messages.no-permission"));
+                    return false;
+                }
+                if (!(commandSender instanceof Player)) {
+                    commandSender.sendMessage(CoReScreen.translate("messages.only-players"));
+                    return false;
+                }
+                Player who = CoReScreen.getPlayer(args[0]);
+                if (who == null) {
+                    commandSender.sendMessage(CoReScreen.translate("messages.player-offline").replace("%who%", args[0]));
+                    return false;
+                }
+                AtomicInteger i = new AtomicInteger(0);
+                CSManager.modules.forEach(module -> {
+                    if (!commandSender.hasPermission("corescreen.clientsettings." + module.getPermission())) {
+                        commandSender.sendMessage(CoReScreen.translate("messages.client-settings.no-permission-to-setting").replace("%cs%", module.getName()));
+                        return;
+                    }
+                    commandSender.sendMessage(CoReScreen.translate("messages.client-settings.chat-message-format").replace("%key%", module.getName()).replace("%value%", module.getValue(who)));
+                    i.set(i.get() + 1);
+                });
+                if(i.get() == 0){
+                    commandSender.sendMessage(CoReScreen.translate("messages.client-settings.no-permission-to-view-all"));
+                }
+            } else if (args.length == 2) {
+                if (!commandSender.hasPermission("corescreen.clientsettings")) {
+                    commandSender.sendMessage(CoReScreen.translate("messages.no-permission"));
+                    return false;
+                }
+                if (!(commandSender instanceof Player)) {
+                    commandSender.sendMessage(CoReScreen.translate("messages.only-players"));
+                    return false;
+                }
+                Player who = CoReScreen.getPlayer(args[0]);
+                if (who == null) {
+                    commandSender.sendMessage(CoReScreen.translate("messages.player-offline").replace("%who%", args[0]));
+                    return false;
+                }
+                Optional<CSModule> module = CSManager.modules.stream().filter(r -> r.getName().equalsIgnoreCase(args[1])).findFirst();
+                if(!module.isPresent()){
+                    commandSender.sendMessage(CoReScreen.translate("messages.client-settings.invalid-client-setting"));
+                    return false;
+                }
+                if(!commandSender.hasPermission("corescreen.clientsettings." + module.get().getPermission())){
+                    commandSender.sendMessage(CoReScreen.translate("messages.client-settings.no-permission-to-setting").replace("%cs%", module.get().getName()));
+                    return false;
+                }
+                commandSender.sendMessage(CoReScreen.translate("messages.client-settings.chat-message-format").replace("%key%", module.get().getName()).replace("%value%", module.get().getValue(who)));
+            }
+            return false;
+        }
+
+        public static class TabComplete implements TabCompleter {
+            @Override
+            public List<String> onTabComplete(CommandSender commandSender, Command command, String alias, String[] args) {
+                if (args.length == 1) return Bukkit.getOnlinePlayers().stream().map(Player::getName).map(String::valueOf).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
+                if (args.length == 2) return CSManager.modules.stream().filter(r -> commandSender.hasPermission("corescreen.clientsettings." + r.getPermission())).map(CSModule::getName).map(String::toLowerCase).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
+                return null;
+            }
+        }
+    }
+
     public static class Freeze implements CommandExecutor {
         @Override
         public boolean onCommand(CommandSender commandSender, org.bukkit.command.Command command, String alias, String[] args) {
@@ -227,12 +297,11 @@ public class Commands {
                     commandSender.sendMessage(CoReScreen.translate("messages.no-permission"));
                     return false;
                 }
-                List<Player> LWho = Bukkit.getOnlinePlayers().stream().filter(r -> r.getName().equals(args[0])).collect(Collectors.toList());
-                if (LWho.isEmpty()) {
+                Player who = CoReScreen.getPlayer(args[0]);
+                if (who == null) {
                     commandSender.sendMessage(CoReScreen.translate("messages.player-offline").replace("%who%", args[0]));
                     return false;
                 }
-                Player who = LWho.get(0);
                 if (who.getName().equals(commandSender.getName()) && (commandSender instanceof Player && !FreezeManager.isFrozen((Player) commandSender))) {
                     who.sendMessage(CoReScreen.translate("messages.freeze.command.freeze-self"));
                     return false;

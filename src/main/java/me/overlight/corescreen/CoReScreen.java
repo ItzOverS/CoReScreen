@@ -1,6 +1,7 @@
 package me.overlight.corescreen;
 
 import io.github.retrooper.packetevents.PacketEvents;
+import me.overlight.corescreen.ClientSettings.ClientSettingsGrabber;
 import me.overlight.corescreen.Freeze.Cache.CacheManager;
 import me.overlight.corescreen.Freeze.FreezeManager;
 import me.overlight.corescreen.Freeze.Listeners;
@@ -80,6 +81,11 @@ public final class CoReScreen extends JavaPlugin {
             Bukkit.getScheduler().runTask(this, () -> PacketEvents.get().getEventManager().registerListener(new me.overlight.corescreen.Test.PacketHandler()));
             getServer().getPluginCommand("test").setExecutor(new Commands.Test());
             getServer().getPluginCommand("test").setTabCompleter(new Commands.Test.TabComplete());
+        }
+        { // ClientSettings System
+            Bukkit.getScheduler().runTask(this, () -> PacketEvents.get().getEventManager().registerListener(new ClientSettingsGrabber()));
+            getServer().getPluginCommand("clientsettings").setExecutor(new Commands.ClientSettings());
+            getServer().getPluginCommand("clientsettings").setTabCompleter(new Commands.ClientSettings.TabComplete());
         }
         saveDefaultConfig();
 

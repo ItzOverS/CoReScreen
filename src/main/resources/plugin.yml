@@ -12,3 +12,5 @@ commands:
     aliases: [p]
   test:
     aliases: [t]
+  clientsettings:
+    aliases: [cs]

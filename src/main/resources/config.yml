@@ -64,7 +64,11 @@ messages:
       perform: "%prefix% &aPerforming hotbar-shuffle on &7%player%&a!"
       success: "%prefix% &7%player%&a has accepted the hotbar-shuffle!"
       failure: "%prefix% &7%player%&c has rejected the hotbar-shuffle!"
-
+  client-settings:
+    invalid-client-setting: "%prefix% &cCould not find target client setting"
+    no-permission-to-setting: "%prefix% &cYou don't have permission to &7%cs%"
+    no-permission-to-view-all: "%prefix% &cYou don't have permission to view settings"
+    chat-message-format: "%prefix% &c%key%&7: &c%value%"
 settings:
   freeze:
     inventory-clearing:
