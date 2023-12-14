@@ -241,7 +241,7 @@ public class Commands {
                 }
                 AtomicInteger i = new AtomicInteger(0);
                 CSManager.modules.forEach(module -> {
-                    if (!commandSender.hasPermission("corescreen.clientsettings." + module.getPermission())) {
+                    if (!commandSender.hasPermission("corescreen.clientsettings." + module.getPermission().toLowerCase())) {
                         commandSender.sendMessage(CoReScreen.translate("messages.client-settings.no-permission-to-setting").replace("%cs%", module.getName()));
                         return;
                     }
@@ -270,7 +270,7 @@ public class Commands {
                     commandSender.sendMessage(CoReScreen.translate("messages.client-settings.invalid-client-setting"));
                     return false;
                 }
-                if(!commandSender.hasPermission("corescreen.clientsettings." + module.get().getPermission())){
+                if(!commandSender.hasPermission("corescreen.clientsettings." + module.get().getPermission().toLowerCase())){
                     commandSender.sendMessage(CoReScreen.translate("messages.client-settings.no-permission-to-setting").replace("%cs%", module.get().getName()));
                     return false;
                 }
