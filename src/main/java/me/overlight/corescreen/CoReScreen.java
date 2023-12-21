@@ -87,6 +87,10 @@ public final class CoReScreen extends JavaPlugin {
             getServer().getPluginCommand("clientsettings").setExecutor(new Commands.ClientSettings());
             getServer().getPluginCommand("clientsettings").setTabCompleter(new Commands.ClientSettings.TabComplete());
         }
+        { // Analyzer
+            getServer().getPluginCommand("analyze").setExecutor(new Commands.Analyzer());
+            getServer().getPluginCommand("analyze").setTabCompleter(new Commands.Analyzer.TabComplete());
+        }
         saveDefaultConfig();
 
         if (isClassLoaded("me.clip.placeholderapi.PlaceholderAPI")) {

@@ -51,7 +51,7 @@ messages:
     invalid-profiler-name: "%prefix% &cNo profiler system with name &7%name%&c find!"
     profiler-success-add: "%prefix% &aSuccessful added &8%who%&a's &8%profiler%&a to your profiler&a!"
   test:
-    test-not-found: "%prefix% &cNo test with name &7%test%&a found!"
+    test-not-found: "%prefix% &cNo test with name &7%test%&c found!"
     knockback:
       perform: "%prefix% &aPerforming Knockback on &7%player%&a!"
       success: "%prefix% &7%player%&a has accepted the knockback!"
@@ -69,6 +69,11 @@ messages:
     no-permission-to-setting: "%prefix% &cYou don't have permission to &7%cs%"
     no-permission-to-view-all: "%prefix% &cYou don't have permission to view settings"
     chat-message-format: "%prefix% &c%key%&7: &c%value%"
+  analyzer:
+    illegal-number: "%prefix% &cInvalidate number! (3-25)"
+    no-permission: "%prefix% &cYou don't have enough permission to spectate this analyzer!"
+    analyzer-cancelled: "%prefix% &6%player%&c has left the game & analyzer cancelled" # Message shown when the player who is analyzing by plugin quit
+    analyzing-started: "%prefix% &aAnalyzing for &6%player%&a has started!"
 settings:
   freeze:
     inventory-clearing:

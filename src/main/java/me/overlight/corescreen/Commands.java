@@ -1,5 +1,7 @@
 package me.overlight.corescreen;
 
+import me.overlight.corescreen.Analyzer.AnalyzeModule;
+import me.overlight.corescreen.Analyzer.AnalyzerManager;
 import me.overlight.corescreen.ClientSettings.CSManager;
 import me.overlight.corescreen.ClientSettings.CSModule;
 import me.overlight.corescreen.Freeze.Cache.CacheManager;
@@ -106,9 +108,7 @@ public class Commands {
         public static class TabComplete implements TabCompleter {
             @Override
             public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
-                if(args.length == 1 && commandSender.hasPermission("corescreen.vanish.other")){
-                    return Bukkit.getOnlinePlayers().stream().map(Player::getName).map(String::valueOf).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
-                }
+                if(args.length == 1 && commandSender.hasPermission("corescreen.vanish.other")) return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
                 return null;
             }
         }
@@ -162,12 +162,12 @@ public class Commands {
             public List<String> onTabComplete(CommandSender commandSender, Command command, String alias, String[] args) {
                 if (args.length == 1) {
                     List<String> out = new ArrayList<>();
-                    if(commandSender.hasPermission("corescreen.profiler.append")) out.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).map(String::valueOf).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList()));
+                    if(commandSender.hasPermission("corescreen.profiler.append")) out.addAll(Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList()));
                     if(commandSender.hasPermission("corescreen.profiler.remove")) out.add("remove");
                     return out;
                 };
                 if (args.length == 2 && commandSender.hasPermission("corescreen.profiler.append")) {
-                    List<String> out = new ArrayList<>(ProfilerManager.profilingSystems.stream().map(ProfilingSystem::getName).map(String::toLowerCase).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList()));
+                    List<String> out = new ArrayList<>(ProfilerManager.profilingSystems.stream().map(r -> r.getName().toLowerCase()).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList()));
                     out.addAll(NmsHandler.handlers.stream().map(NmsHandler.NmsWrapper::getName).collect(Collectors.toList()));
                     return out;
                 };
@@ -215,8 +215,86 @@ public class Commands {
         public static class TabComplete implements TabCompleter {
             @Override
             public List<String> onTabComplete(CommandSender commandSender, Command command, String alias, String[] args) {
-                if (args.length == 1) return Bukkit.getOnlinePlayers().stream().map(Player::getName).map(String::valueOf).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
-                if (args.length == 2) return TestManager.tests.stream().map(r -> r.getAlias()[0]).map(String::toLowerCase).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
+                if (args.length == 1) return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
+                if (args.length == 2) return TestManager.tests.stream().map(r -> r.getAlias()[0].toLowerCase()).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
+                return null;
+            }
+        }
+    }
+
+    public static class Analyzer implements CommandExecutor {
+        @Override
+        public boolean onCommand(CommandSender commandSender, org.bukkit.command.Command command, String alias, String[] args) {
+            if (args.length == 2 || args.length == 3) {
+                if (!commandSender.hasPermission("corescreen.analyzer")) {
+                    commandSender.sendMessage(CoReScreen.translate("messages.no-permission"));
+                    return false;
+                }
+                if (!(commandSender instanceof Player)) {
+                    commandSender.sendMessage(CoReScreen.translate("messages.only-players"));
+                    return false;
+                }
+                List<Player> LWho = Bukkit.getOnlinePlayers().stream().filter(r -> r.getName().equals(args[0])).collect(Collectors.toList());
+                if (LWho.isEmpty()) {
+                    commandSender.sendMessage(CoReScreen.translate("messages.player-offline").replace("%who%", args[0]));
+                    return false;
+                }
+                Player who = LWho.get(0);
+                AnalyzeModule module = AnalyzerManager.analyzers.stream().filter(r -> r.getName().equalsIgnoreCase(args[1])).findFirst().orElse(null);
+                if (module == null) {
+                    commandSender.sendMessage(CoReScreen.translate("messages.test.test-not-found").replace("%test%", args[1]));
+                    return false;
+                }
+                if (!commandSender.hasPermission("corescreen.analyzer." + module.getName().toLowerCase())) {
+                    commandSender.sendMessage(CoReScreen.translate("messages.analyzer.no-permission"));
+                    return false;
+                }
+                module.activate(who);
+                commandSender.sendMessage(CoReScreen.translate("messages.analyzer.analyzing-started").replace("%player%", who.getName()));
+                int delay;
+                try {
+                    delay = args.length == 2 ? 5 : Integer.parseInt(args[2]);
+                } catch(Exception ex) {
+                    commandSender.sendMessage(CoReScreen.translate("messages.analyzer.illegal-number"));
+                    return false;
+                }
+                if(!(delay >= 3 && delay <= 25)) {
+                    commandSender.sendMessage(CoReScreen.translate("messages.analyzer.illegal-number"));
+                    return false;
+                }
+                new BukkitRunnable(){
+                    @Override
+                    public void run() {
+                        if(CoReScreen.getPlayer(commandSender.getName()) == null) {
+                            cancel();
+                            return;
+                        }
+                        if(CoReScreen.getPlayer(who.getName()) == null) {
+                            cancel();
+                            commandSender.sendMessage(CoReScreen.translate("messages.analyzer.analyzer-cancelled"));
+                            return;
+                        }
+                        if(t >= delay * 10){
+                            commandSender.sendMessage(prefix);
+                            commandSender.sendMessage("§9Analyzer Result §9§l-------------");
+                            module.result((Player) commandSender, who);
+                            commandSender.sendMessage("§9§l--------------------------");
+                            cancel();
+                            return;
+                        }
+                        t++;
+                    }
+                    private int t = 0;
+                }.runTaskTimerAsynchronously(CoReScreen.getInstance(), 0, 2);
+            }
+            return false;
+        }
+
+        public static class TabComplete implements TabCompleter {
+            @Override
+            public List<String> onTabComplete(CommandSender commandSender, Command command, String alias, String[] args) {
+                if (args.length == 1) return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
+                if (args.length == 2) return AnalyzerManager.analyzers.stream().map(r -> r.getName().toLowerCase()).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
                 return null;
             }
         }
@@ -282,8 +360,8 @@ public class Commands {
         public static class TabComplete implements TabCompleter {
             @Override
             public List<String> onTabComplete(CommandSender commandSender, Command command, String alias, String[] args) {
-                if (args.length == 1) return Bukkit.getOnlinePlayers().stream().map(Player::getName).map(String::valueOf).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
-                if (args.length == 2) return CSManager.modules.stream().filter(r -> commandSender.hasPermission("corescreen.clientsettings." + r.getPermission())).map(CSModule::getName).map(String::toLowerCase).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
+                if (args.length == 1) return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
+                if (args.length == 2) return CSManager.modules.stream().filter(r -> commandSender.hasPermission("corescreen.clientsettings." + r.getPermission())).map(r -> r.getName().toLowerCase()).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
                 return null;
             }
         }
@@ -432,7 +510,7 @@ public class Commands {
             @Override
             public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] args) {
                 if(args.length == 1 && commandSender.hasPermission("corescreen.freeze")){
-                    return Bukkit.getOnlinePlayers().stream().map(Player::getName).map(String::valueOf).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
+                    return Bukkit.getOnlinePlayers().stream().map(Player::getName).filter(r -> r.startsWith(args[args.length - 1])).collect(Collectors.toList());
                 }
                 return null;
             }
