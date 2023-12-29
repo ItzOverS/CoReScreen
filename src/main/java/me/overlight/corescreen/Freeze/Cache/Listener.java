@@ -6,8 +6,6 @@ import io.github.retrooper.packetevents.packettype.PacketType;
 import io.github.retrooper.packetevents.packetwrappers.play.in.chat.WrappedPacketInChat;
 import me.overlight.corescreen.CoReScreen;
 import me.overlight.corescreen.Freeze.FreezeManager;
-import me.overlight.powerlib.api.commands.CommandPreProcessEvent;
-import org.bukkit.event.EventHandler;
 
 public class Listener extends PacketListenerAbstract {
     @Override
