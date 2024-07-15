@@ -72,7 +72,7 @@ public final class CoReScreen extends JavaPlugin {
             getServer().getPluginCommand("freeze").setTabCompleter(new Commands.Freeze.TabComplete());
         }
         { // Profiler System
-            Bukkit.getScheduler().runTaskTimer(this, new ProfileHandler(), 10, getConfig().getInt("settings.profiler.profiler-update-delay"));
+            Bukkit.getScheduler().runTaskTimerAsynchronously(this, new ProfileHandler(), 10, getConfig().getInt("settings.profiler.profiler-update-delay"));
             getServer().getPluginCommand("profiler").setExecutor(new Commands.Profiler());
             getServer().getPluginCommand("profiler").setTabCompleter(new Commands.Profiler.TabComplete());
             NmsHandler.loadCustomSettings();

@@ -16,8 +16,11 @@ import io.github.retrooper.packetevents.packetwrappers.play.out.entitystatus.Wra
 import io.github.retrooper.packetevents.packetwrappers.play.out.entityteleport.WrappedPacketOutEntityTeleport;
 import io.github.retrooper.packetevents.packetwrappers.play.out.entityvelocity.WrappedPacketOutEntityVelocity;
 import io.github.retrooper.packetevents.packetwrappers.play.out.namedentityspawn.WrappedPacketOutNamedEntitySpawn;
+import io.github.retrooper.packetevents.packetwrappers.play.out.namedsoundeffect.WrappedPacketOutNamedSoundEffect;
+import io.github.retrooper.packetevents.packetwrappers.play.out.playerinfo.WrappedPacketOutPlayerInfo;
 import io.github.retrooper.packetevents.packetwrappers.play.out.removeentityeffect.WrappedPacketOutRemoveEntityEffect;
 import io.github.retrooper.packetevents.packetwrappers.play.out.tabcomplete.WrappedPacketOutTabComplete;
+import io.github.retrooper.packetevents.utils.vector.Vector3d;
 import me.overlight.corescreen.CoReScreen;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -27,6 +30,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class PacketHandler extends PacketListenerAbstract {
@@ -48,7 +53,8 @@ public class PacketHandler extends PacketListenerAbstract {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        } else */if (e.getPacketId() == PacketType.Play.Server.ENTITY &&
+        } else */
+        if (e.getPacketId() == PacketType.Play.Server.ENTITY &&
                 new WrappedPacketOutEntity(e.getNMSPacket()).getEntity() instanceof Player && !e.getPlayer().hasPermission(see_other_permission) &&
                 VanishManager.isVanish((Player) new WrappedPacketOutEntity(e.getNMSPacket()).getEntity())) e.setCancelled(true);
         else if (e.getPacketId() == PacketType.Play.Server.REMOVE_ENTITY_EFFECT &&
@@ -96,6 +102,10 @@ public class PacketHandler extends PacketListenerAbstract {
             packet.setMatches(output);
         } else if (e.getPacketId() == PacketType.Play.Server.BLOCK_BREAK_ANIMATION && new WrappedPacketOutBlockBreakAnimation(e.getNMSPacket()).getEntity() instanceof Player &&
                 VanishManager.isVanish((Player) new WrappedPacketOutBlockBreakAnimation(e.getNMSPacket()).getEntity())) e.setCancelled(true);
+        else if (e.getPacketId() == PacketType.Play.Server.NAMED_SOUND_EFFECT) {
+            WrappedPacketOutNamedSoundEffect packet = new WrappedPacketOutNamedSoundEffect(e.getNMSPacket());
+            if(!e.getPlayer().hasPermission(see_other_permission) && packet.getSoundEffectName().startsWith("step.") && VanishManager.vanishes.stream().map(Bukkit::getPlayerExact).filter(Objects::nonNull).anyMatch(f -> packet.getEffectPosition().distance(new Vector3d(f.getLocation())) < .45)) e.setCancelled(true);
+        }
     }
 
     private final boolean isChatMentionBlocked = CoReScreen.getInstance().getConfig().getBoolean("messages.vanish.game.chat-mention.enabled", true);
